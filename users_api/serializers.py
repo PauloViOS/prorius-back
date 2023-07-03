@@ -20,6 +20,23 @@ class ProfileRegisterSerializer(serializers.ModelSerializer):
 		profile_obj.save()
 		return profile_obj
 
+	def validate_password(self, value):
+		special_characters = "\!@#$%^&*()-_=+[{]}|;:',<.>/?"
+		if not any(char in special_characters for char in value):
+			raise ValidationError(
+				"Deve haver ao menos um símbolo na senha"
+			)
+		if not any(char.isdigit() for char in value):
+			raise ValidationError(
+				"Deve haver ao menos um número na senha"
+			)
+		if len(value) < 6:
+			raise ValidationError(
+				"A senha deve ter pelomenos 6 dígitos"
+			)
+		return value
+
+
 
 class ProfileLoginSerializer(serializers.Serializer):
 	email = serializers.EmailField()
