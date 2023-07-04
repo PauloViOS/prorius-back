@@ -24,18 +24,17 @@ class ProfileRegisterSerializer(serializers.ModelSerializer):
 		special_characters = "\!@#$%^&*()-_=+[{]}|;:',<.>/?"
 		if not any(char in special_characters for char in value):
 			raise ValidationError(
-				"Deve haver ao menos um símbolo na senha"
+				"A senha deve conter pelomenos um símbolo"
 			)
 		if not any(char.isdigit() for char in value):
 			raise ValidationError(
-				"Deve haver ao menos um número na senha"
+				"A senha deve conter pelomenos um número"
 			)
 		if len(value) < 6:
 			raise ValidationError(
 				"A senha deve ter pelomenos 6 dígitos"
 			)
 		return value
-
 
 
 class ProfileLoginSerializer(serializers.Serializer):
@@ -45,7 +44,7 @@ class ProfileLoginSerializer(serializers.Serializer):
 	def check_profile(self, clean_data):
 		profile = authenticate(username=clean_data['email'], password=clean_data['password'])
 		if not profile:
-			raise ValidationError('User not found')
+			raise ValidationError('Usuário não encontrado')
 		return profile
 
 
