@@ -12,7 +12,7 @@ class ProfileRegister(APIView):
 	permission_classes = (permissions.AllowAny,)
 
 	def post(self, request):
-		clean_data = request.data  # TODO: custom validation
+		clean_data = request.data
 		serializer = ProfileRegisterSerializer(data=clean_data)
 		if serializer.is_valid(raise_exception=True):
 			profile = serializer.create(clean_data)
