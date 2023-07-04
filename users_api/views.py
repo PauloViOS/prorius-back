@@ -56,10 +56,12 @@ class ProfileDelete(APIView):
 	authentication_classes = (SessionAuthentication,)
 
 	def delete(self, request):
-		profile_email = request.query_params.get('email', None)
+		profile_email = request.data.get('email', None)
 		profile = Profile.objects.get(email=profile_email)
 
-		profile.delete()
+		profile.is_deleted = True
+		profile.save()
+
 		return Response({'status': status.HTTP_204_NO_CONTENT})
 
 
