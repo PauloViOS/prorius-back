@@ -27,11 +27,11 @@ class ProfileLogin(APIView):
 
 	def post(self, request):
 		data = request.data
-		# validate_email(data)
-		# validate_password(password)
 		serializer = ProfileLoginSerializer(data=data)
 		if serializer.is_valid(raise_exception=True):
 			profile = serializer.check_profile(data)
+			if profile.is_deleted:
+				return Response(status=status.HTTP_404_NOT_FOUND)
 			login(request, profile)
 			return Response(serializer.data, status=status.HTTP_200_OK)
 
