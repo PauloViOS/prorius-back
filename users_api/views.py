@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth import login, logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -71,30 +71,34 @@ class ProfileUpdate(APIView):
 
 	def put(self, request):
 		try:
-			profile_email = request.query_params.get('email', None)
-			profile_instance = Profile.objects.get(email=profile_email)
+			data = request.data
+			current_email, name, username, email, password = data['currentEmail'], data['name'], data['username'], \
+				data['email'], data['password']
 
-			name = request.data.get('name', None)
+			profile_instance = Profile.objects.get(email=current_email)
+
 			if name:
 				profile_instance.name = name
 				profile_instance.save()
 
-			username = request.data.get('username', None)
 			if username:
+				username_already_exists = Profile.objects.filter(username=username).exists()
+				if username_already_exists:
+					raise Exception('Nome de usuário não disponível')
 				profile_instance.username = username
 				profile_instance.save()
 
-			email = request.data.get('email', None)
 			if email:
+				email_already_exists = Profile.objects.filter(email=email).exists()
+				if email_already_exists:
+					raise Exception('Email não disponível')
 				profile_instance.email = email
 				profile_instance.save()
 
-			password = request.data.get('password', None)
 			if password:
 				profile_instance.password = password
 				profile_instance.save()
 
 			return Response({'status': status.HTTP_200_OK})
 		except Exception as e:
-			return Response({'message': e, 'status': status.HTTP_400_BAD_REQUEST})
-
+			return Response({'message': str(e), 'status': status.HTTP_400_BAD_REQUEST})
