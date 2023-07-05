@@ -1,10 +1,12 @@
+import pdb
+
 from django.contrib.auth import login, logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .models import Profile
-from .serializers import ProfileRegisterSerializer, ProfileLoginSerializer, ProfileSerializer
+from .serializers import ProfileRegisterSerializer, ProfileLoginSerializer, ProfileSerializer, ProfileUpdateSerializer
 from rest_framework import permissions, status
 
 
@@ -52,7 +54,7 @@ class ProfileView(APIView):
 
 
 class ProfileDelete(APIView):
-	permission_classes = (permissions.IsAuthenticated, )
+	permission_classes = (permissions.IsAuthenticated,)
 	authentication_classes = (SessionAuthentication,)
 
 	def delete(self, request):
@@ -70,35 +72,34 @@ class ProfileUpdate(APIView):
 	authentication_classes = (SessionAuthentication,)
 
 	def put(self, request):
+		serializer = ProfileUpdateSerializer(data=request.data)
+		pdb.set_trace()
+		serializer.is_valid(raise_exception=True)
+		validated_data = serializer.validated_data
+
 		try:
-			data = request.data
-			current_email, name, username, email, password = data['currentEmail'], data['name'], data['username'], \
-				data['email'], data['password']
+			profile_instance = Profile.objects.get(email=validated_data['current_email'])
 
-			profile_instance = Profile.objects.get(email=current_email)
+			if validated_data.get('name'):
+				profile_instance.name = validated_data['name']
 
-			if name:
-				profile_instance.name = name
-				profile_instance.save()
-
-			if username:
-				username_already_exists = Profile.objects.filter(username=username).exists()
+			if validated_data.get('username'):
+				username_already_exists = Profile.objects.filter(username=validated_data['username']).exists()
 				if username_already_exists:
 					raise Exception('Nome de usuário não disponível')
-				profile_instance.username = username
-				profile_instance.save()
+				profile_instance.username = validated_data['username']
 
-			if email:
-				email_already_exists = Profile.objects.filter(email=email).exists()
+			if validated_data.get('email'):
+				email_already_exists = Profile.objects.filter(email=validated_data['email']).exists()
 				if email_already_exists:
 					raise Exception('Email não disponível')
-				profile_instance.email = email
-				profile_instance.save()
+				profile_instance.email = validated_data['email']
 
-			if password:
-				profile_instance.password = password
-				profile_instance.save()
+			if validated_data.get('password'):
+				profile_instance.set_password(validated_data['password'])
+
+			profile_instance.save()
 
 			return Response({'status': status.HTTP_200_OK})
 		except Exception as e:
-			return Response({'message': str(e), 'status': status.HTTP_400_BAD_REQUEST})
+			return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
