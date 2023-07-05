@@ -59,4 +59,3 @@ class ProfileUpdateSerializer(serializers.Serializer):
 	name = serializers.CharField(required=False, allow_blank=True)
 	username = serializers.CharField(required=False, allow_blank=True)
 	email = serializers.EmailField(required=False, allow_blank=True)
-	password = serializers.CharField(required=False, allow_blank=True)

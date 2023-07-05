@@ -1,5 +1,3 @@
-import pdb
-
 from django.contrib.auth import login, logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
@@ -73,7 +71,6 @@ class ProfileUpdate(APIView):
 
 	def put(self, request):
 		serializer = ProfileUpdateSerializer(data=request.data)
-		pdb.set_trace()
 		serializer.is_valid(raise_exception=True)
 		validated_data = serializer.validated_data
 
@@ -94,9 +91,6 @@ class ProfileUpdate(APIView):
 				if email_already_exists:
 					raise Exception('Email não disponível')
 				profile_instance.email = validated_data['email']
-
-			if validated_data.get('password'):
-				profile_instance.set_password(validated_data['password'])
 
 			profile_instance.save()
 
