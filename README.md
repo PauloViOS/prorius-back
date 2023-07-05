@@ -1,5 +1,5 @@
 Uma API REST feia em Django com Django Rest Framework.
-Essa API deve atuar em conjunto com o projeto presente no repositório prorius-front.
+Essa API deve atuar em conjunto com o projeto presente no repositório [prorius-front](https://github.com/PauloViOS/prorius-front).
 
 Para rodar essa aplicação:
 - Clone o projeto para a sua máquina
