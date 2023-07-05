@@ -99,6 +99,6 @@ class ProfileUpdate(APIView):
 				profile_instance.password = password
 				profile_instance.save()
 
-			return Response(status = status.HTTP_200_OK)
+			return Response({'status': status.HTTP_200_OK})
 		except Exception as e:
-			return Response({'message': str(e) },  status= status.HTTP_400_BAD_REQUEST)
+			return Response({'message': str(e), 'status': status.HTTP_400_BAD_REQUEST})
